@@ -1,13 +1,21 @@
 package dev.potato.highlands;
 
+import dev.potato.highlands.commands.admin.AdminCommand;
+import dev.potato.highlands.listeners.WorldModificationListener;
 import dev.potato.highlands.storage.configuration.ConfigManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 public final class RPG extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        ConfigManager.getManager().register(this);
+        ConfigManager.getManager().loadAll();
 
+        Objects.requireNonNull(this.getCommand("admin")).setExecutor(new AdminCommand(this));
+
+        this.getServer().getPluginManager().registerEvents(new WorldModificationListener(), this);
     }
+
 }

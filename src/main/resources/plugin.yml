@@ -1,6 +1,10 @@
 name: RPG
-version: '${version}'
+version: '1.0'
 main: dev.potato.highlands.RPG
 api-version: '1.20'
 authors: [Potato, Faceless]
 description: An RPG plugin for an upcoming RPG MC server!
+commands:
+  admin:
+    usage: /admin <sub>
+    description: Admin Commands
