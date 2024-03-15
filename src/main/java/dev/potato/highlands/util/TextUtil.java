@@ -18,4 +18,9 @@ public class TextUtil {
     public static Component toComponent(String text) {
         return Component.text(text).decoration(TextDecoration.ITALIC, false);
     }
+
+    public String strip(String text) {
+        return MiniMessage.miniMessage().stripTags(text);
+    }
+
 }

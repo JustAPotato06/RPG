@@ -12,6 +12,10 @@ public class Lore {
         this.lore = new ArrayList<>();
     }
 
+    public Lore(ArrayList<Component> lore) {
+        this.lore = lore;
+    }
+
     public void addLine(Component text) {
         lore.add(text);
     }

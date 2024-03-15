@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 
 public class ChatUtil {
 
-    private static final String successPrefix = "&a&l[SUCCESSFUL] ";
-    private static final String failPrefix = "&c&l[FAILED] ";
-    private static final String errorPrefix = "&4&l[ERROR] ";
+    private static final String successPrefix = "&2&lSUCCESSFUL ";
+    private static final String failPrefix = "&c&lFAILED ";
+    private static final String errorPrefix = "&4&lERROR ";
 
     public static void sendLegacyMessage(Player player, MessageType type, String msg) {
         switch (type) {

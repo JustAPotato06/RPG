@@ -44,4 +44,5 @@ public class WorldModificationListener implements Listener {
             default -> event.setCancelled(false);
         }
     }
+
 }
