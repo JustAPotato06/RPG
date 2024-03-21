@@ -38,11 +38,9 @@ public class WorldModificationListener implements Listener {
         Entity entity = event.getEntity();
         if(!(entity instanceof Player player)) return;
         AdminState.State state = AdminState.getState(player);
+        if(state == null) return;
 
-        switch (state) {
-            case GOD_MODE -> event.setCancelled(true);
-            default -> event.setCancelled(false);
-        }
+        event.setCancelled(state == AdminState.State.GOD_MODE);
     }
 
 }

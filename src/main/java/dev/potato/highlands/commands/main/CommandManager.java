@@ -32,7 +32,7 @@ public abstract class CommandManager implements TabExecutor {
         if (!(sender instanceof Player player)) return true;
 
         if (getPermission() != null) {
-            if (!player.hasPermission(getPermission())) return true;
+            if (!player.hasPermission(getPermission()) || !player.isOp()) return true;
         } else {
             if (!player.isOp()) return true;
         }
@@ -52,6 +52,10 @@ public abstract class CommandManager implements TabExecutor {
 
     protected String getPermission() {
         return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     private SubCommand getCommand(String name) {

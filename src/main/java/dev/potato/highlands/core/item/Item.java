@@ -259,7 +259,7 @@ public class Item {
         return null;
     }
 
-    public static String toReadableString(Attribute attribute) {
+    protected static String toReadableString(Attribute attribute) {
         return switch (attribute) {
             case GENERIC_MAX_HEALTH -> "Max Health";
             case GENERIC_FOLLOW_RANGE -> "Follow Range";

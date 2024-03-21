@@ -1,5 +1,6 @@
 package dev.potato.highlands.events;
 
+import dev.potato.highlands.core.item.Item;
 import dev.potato.highlands.core.spell.trigger.TriggerAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -13,10 +14,12 @@ public class ClickTriggerEvent extends Event implements Cancellable {
     private boolean isCancelled;
     private final Player player;
     private  final TriggerAction action;
+    private final Item item;
 
-    public ClickTriggerEvent(Player player, TriggerAction action) {
+    public ClickTriggerEvent(Player player, TriggerAction action, Item item) {
         this.player = player;
         this.action = action;
+        this.item = item;
     }
 
     @Override
@@ -37,11 +40,28 @@ public class ClickTriggerEvent extends Event implements Cancellable {
         return HANDLERS_LIST;
     }
 
+    /**
+     * Get the player involved with this event
+     * @return the player that triggered this event
+     */
     public Player getPlayer() {
         return player;
     }
 
-    public TriggerAction getAction() {
+    /**
+     * Get the enum representing the trigger sequence
+     * in the event
+     * @return the trigger sequence
+     */
+    public TriggerAction getTriggerAction() {
         return action;
+    }
+
+    /**
+     * Get the item involved with this event
+     * @return the Item used to trigger this event
+     */
+    public Item getItem() {
+        return item;
     }
 }
