@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+// FIXME: Find a cleaner alternative to add attributes without using complex data structures
+//  in constructor #see(HashMap<Attribute, AttributeModifier> attributes)
 public class Item {
 
     private final ItemStack item;
@@ -108,6 +110,7 @@ public class Item {
         return attributes;
     }
 
+    // FIXME: Better lore organisation (User friendly)
     protected static List<Component> processLore(@Nullable Class<? extends RpgClass> owningClass,
                                                @Nullable List<String> description,
                                                @Nullable Rarity rarity,

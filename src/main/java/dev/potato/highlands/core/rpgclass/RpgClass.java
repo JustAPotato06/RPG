@@ -4,6 +4,7 @@ public abstract class RpgClass {
 
     private final String name;
 
+    // TODO: Actual Logic
     public RpgClass(String name) {
         this.name = name;
     }
