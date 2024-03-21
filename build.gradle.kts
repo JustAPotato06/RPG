@@ -1,6 +1,7 @@
 plugins {
     id ("java")
     id ("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm")
 }
 
 group = "dev.highlands"
@@ -17,6 +18,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks {

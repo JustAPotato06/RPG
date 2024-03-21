@@ -28,7 +28,7 @@ public class ConfigManager {
     }
 
     /**
-     * Called in Plugin Main Class
+     * Called in Plugin Main RpgClass
      * Loads every file ending with .yml in the plugin's data folder
      * into memory.
      *

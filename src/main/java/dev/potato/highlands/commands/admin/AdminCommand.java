@@ -7,5 +7,6 @@ public class AdminCommand extends CommandManager {
     public AdminCommand(JavaPlugin plugin) {
         super(plugin);
         register(new AdminModeCommand(plugin));
+        register(new AdminReloadCommand(plugin));
     }
 }

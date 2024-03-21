@@ -19,7 +19,7 @@ public class TextUtil {
         return Component.text(text).decoration(TextDecoration.ITALIC, false);
     }
 
-    public String strip(String text) {
+    public String stripMiniTags(String text) {
         return MiniMessage.miniMessage().stripTags(text);
     }
 

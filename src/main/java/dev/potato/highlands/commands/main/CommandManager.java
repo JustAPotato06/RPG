@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public abstract class CommandManager implements TabExecutor {
     private final Map<String, SubCommand> commands;
+    private String permission;
 
     public CommandManager(JavaPlugin plugin) {
         this.commands = new HashMap<>();
@@ -30,10 +31,14 @@ public abstract class CommandManager implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (!(sender instanceof Player player)) return true;
 
-        if (args.length == 0) {
-
-            return true;
+        if (getPermission() != null) {
+            if (!player.hasPermission(getPermission())) return true;
+        } else {
+            if (!player.isOp()) return true;
         }
+
+        if (args.length == 0) return true;
+
         SubCommand command = getCommand(args[0]);
         if (command == null) return true;
         if (command.getPermission() != null && !player.hasPermission(command.getPermission())) return true;
@@ -43,6 +48,10 @@ public abstract class CommandManager implements TabExecutor {
 
     protected void register(SubCommand subCommand) {
         commands.put(subCommand.getName(), subCommand);
+    }
+
+    protected String getPermission() {
+        return permission;
     }
 
     private SubCommand getCommand(String name) {
@@ -62,6 +71,12 @@ public abstract class CommandManager implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (!(sender instanceof Player player)) return null;
+        if (getPermission() != null) {
+            if (!player.hasPermission(getPermission())) return null;
+        }else {
+            if (!player.isOp()) return null;
+        }
+
         if (args.length == 1) {
             return commands.keySet().stream()
                     .filter(command -> command != null && command.startsWith(args[0]))
