@@ -4,6 +4,9 @@ import dev.potato.highlands.commands.main.SubCommand;
 import dev.potato.highlands.core.admin.AdminState;
 import dev.potato.highlands.util.ChatUtil;
 import dev.potato.highlands.util.MessageType;
+import dev.potato.highlands.util.MessageUtil;
+import dev.potato.highlands.util.menu.ItemUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,6 +41,12 @@ public class AdminModeCommand extends SubCommand {
 
             AdminState.setState(player, state);
             ChatUtil.sendLegacyMessage(player, MessageType.SUCCESSFUL, "Toggled on " + state.humanName);
+            if(state == AdminState.State.ENTITY_EDITOR_MODE) {
+                player.getInventory().addItem(ItemUtil.editorItem);
+                for(Component component : MessageUtil.entityManipulationTutorial()) {
+                    player.sendMessage(component);
+                }
+            }
         } catch (IllegalArgumentException e) {
             ChatUtil.sendLegacyMessage(player, MessageType.FAILED, "Illegal Mode");
         }

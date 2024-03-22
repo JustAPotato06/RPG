@@ -1,5 +1,6 @@
 package dev.potato.highlands.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import dev.potato.highlands.core.admin.AdminState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -42,5 +43,4 @@ public class WorldModificationListener implements Listener {
 
         event.setCancelled(state == AdminState.State.GOD_MODE);
     }
-
 }

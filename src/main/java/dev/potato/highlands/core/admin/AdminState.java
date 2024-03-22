@@ -18,6 +18,11 @@ public class AdminState {
         return stateMap.get(player.getUniqueId()) == State.BUILD_MODE;
     }
 
+    public static boolean isInEntityEditorMode(Player player) {
+        if(!stateMap.containsKey(player.getUniqueId())) return false;
+        return stateMap.get(player.getUniqueId()) == State.ENTITY_EDITOR_MODE;
+    }
+
     public static void setState(Player player, State state) {
         if(state == null) {
             stateMap.remove(player.getUniqueId());
@@ -34,7 +39,8 @@ public class AdminState {
     public enum State {
         DEFAULT("Default"),
         GOD_MODE("God Mode"),
-        BUILD_MODE("Build Mode");
+        BUILD_MODE("Build Mode"),
+        ENTITY_EDITOR_MODE("Entity Editor Mode");
 
         public final String humanName;
 

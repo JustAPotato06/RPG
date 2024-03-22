@@ -5,5 +5,6 @@ import org.bukkit.NamespacedKey;
 
 public class Keys {
 
-    public static final NamespacedKey CUSTOM_ITEM_KEY = new NamespacedKey(RPG.plugin, "bukkit_material_key");
+    public static final NamespacedKey ENTITY_EDITOR = new NamespacedKey(RPG.plugin, "entity_editor_key");
+
 }
