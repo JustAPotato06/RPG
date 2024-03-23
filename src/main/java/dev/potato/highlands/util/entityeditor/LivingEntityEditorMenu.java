@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+// Fold some methods while reading this for your own safety.
 public class LivingEntityEditorMenu extends Menu {
 
     private final LivingEntity entity;
@@ -31,14 +32,10 @@ public class LivingEntityEditorMenu extends Menu {
             entity.setRemoveWhenFarAway(!entity.getRemoveWhenFarAway());
             setItem(2, despawnButton());
         }));
-
-        // Inherits menu from Entity via Composition
         setItem(18, ItemUtil.create(Material.GREEN_CONCRETE, TextUtil.translateLegacy("&7Entity")), ((p, event) -> {
             entityMenu.open(p);
             entityMenu.setItem(18, ItemUtil.create(Material.GREEN_CONCRETE, TextUtil.translateLegacy("&8Living Entity")), ((p1, event1) -> this.open(p1)));
         }));
-
-        // DELETE ENTITY
         setItem(26, ItemUtil.create(Material.BARRIER, TextUtil.translateLegacy("&4DELETE")), ((p, event) -> {
             entity.remove();
             close(p);

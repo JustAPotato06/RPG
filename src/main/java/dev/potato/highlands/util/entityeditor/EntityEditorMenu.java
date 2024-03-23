@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+// Fold some methods while reading this for your own safety.
 public class EntityEditorMenu extends Menu {
 
     private final Entity entity;
@@ -48,8 +49,6 @@ public class EntityEditorMenu extends Menu {
             entity.setPersistent(!entity.isPersistent());
             setItem(5, persistentButton());
         }));
-
-        // DELETE ENTITY
         setItem(26, ItemUtil.create(Material.BARRIER, TextUtil.translateLegacy("&4DELETE")), ((p, event) -> {
             entity.remove();
             close(p);

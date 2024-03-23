@@ -70,6 +70,7 @@ public class EntityEditorListener implements Listener {
         if(player.getInventory().getItemInMainHand().getType().isBlock()) {
             BlockDisplay blockDisplay = (BlockDisplay) player.getWorld().spawnEntity(location, EntityType.BLOCK_DISPLAY);
             blockDisplay.setBlock(player.getInventory().getItemInMainHand().getType().createBlockData());
+            return;
         }
 
         if(player.getInventory().getItemInMainHand().getType().isItem()) {
