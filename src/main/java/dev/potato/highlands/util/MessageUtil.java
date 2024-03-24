@@ -17,7 +17,8 @@ public class MessageUtil {
         list.add(TextUtil.translateLegacy("&7to place it as a display entity, turn on"));
         list.add(TextUtil.translateLegacy("&7hitboxes to see display's pivot points"));
         list.add(TextUtil.translateLegacy("&7Displays inherits a gui from entities."));
-        list.add(TextUtil.translateLegacy("&8-+=================================+-"));
+        list.add(TextUtil.translateLegacy("&8-+==========GUI-CONTROLS===========+-"));
+        list.add(TextUtil.translateLegacy("&ashift click, right click, left click"));
         list.add(TextUtil.translateLegacy("&7"));
         return list;
     }

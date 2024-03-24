@@ -29,11 +29,11 @@ public class AdminModeCommand extends SubCommand {
             AdminState.State state = AdminState.State.valueOf(mode);
             if(state == AdminState.State.DEFAULT){
                 ChatUtil.sendLegacyMessage(player, MessageType.FAILED, "Illegal Mode");
-                AdminState.setState(player, null); // Garbage collect.
+                AdminState.setState(player, null);
                 return;
             }
 
-            if(AdminState.getState(player) == state) { // Toggle state.
+            if(AdminState.getState(player) == state) {
                 AdminState.setState(player, null);
                 ChatUtil.sendLegacyMessage(player, MessageType.SUCCESSFUL, "Toggled off " + state.humanName);
                 return;
@@ -43,9 +43,7 @@ public class AdminModeCommand extends SubCommand {
             ChatUtil.sendLegacyMessage(player, MessageType.SUCCESSFUL, "Toggled on " + state.humanName);
             if(state == AdminState.State.ENTITY_EDITOR_MODE) {
                 player.getInventory().addItem(ItemUtil.editorItem);
-                for(Component component : MessageUtil.entityManipulationTutorial()) {
-                    player.sendMessage(component);
-                }
+                for(Component component : MessageUtil.entityManipulationTutorial()) player.sendMessage(component);
             }
         } catch (IllegalArgumentException e) {
             ChatUtil.sendLegacyMessage(player, MessageType.FAILED, "Illegal Mode");

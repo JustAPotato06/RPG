@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// Fold some methods while reading this for your own safety.
+// this code is only to be read by whoever wrote it
 public class DisplayEntityMenu extends Menu {
 
     private final Display display;
@@ -29,12 +29,15 @@ public class DisplayEntityMenu extends Menu {
 
     private final boolean[] translationOptions = new boolean[]{true, false, false};
     private final boolean[] scaleOptions = new boolean[]{true, false, false};
+    private final boolean[] leftRotOptions = new boolean[]{true, false, false, false};
+    private final boolean[] rightRotOptions = new boolean[]{true, false, false, false};
 
-    private final boolean[] precisionOptions = new boolean[]{true, false,};
+    private final boolean[] settings = new boolean[]{true, false, false};
     private boolean precision = false;
+    private boolean modifyAllAngles = false;
     private float modifier = 0.1f;
 
-    //TODO: Rotations,Single classes for display specific settings, ability to change block/item type and maybe undo /redo system
+    //TODO: ability to change block/item type and maybe undo /redo system
     public DisplayEntityMenu(Display display, EntityEditorMenu entityMenu) {
         super(27, TextUtil.translateLegacy("&7Display Editor Menu: "+ getName(display)));
         this.display = display;
@@ -85,17 +88,46 @@ public class DisplayEntityMenu extends Menu {
                     display.getTransformation().getRightRotation()));
             setItem(3, scaleButton());
         }));
+        setItem(4, leftRotButton(), ((p, event) -> {
+            if (event.isShiftClick()) {
+                handleShiftClick(leftRotOptions, event);
+                setItem(4, leftRotButton());
+                return;
+            }
+            Quaternionf leftRot = getLeftRot(event);
+            display.setTransformation(new Transformation(
+                    display.getTransformation().getTranslation(),
+                    leftRot,
+                    display.getTransformation().getScale(),
+                    display.getTransformation().getRightRotation()));
+            setItem(4, leftRotButton());
+        }));
+        setItem(5, rightRotButton(), ((p, event) -> {
+            if (event.isShiftClick()) {
+                handleShiftClick(rightRotOptions, event);
+                setItem(5, rightRotButton());
+                return;
+            }
+            Quaternionf rightRot = getRightRot(event);
+            display.setTransformation(new Transformation(
+                    display.getTransformation().getTranslation(),
+                    display.getTransformation().getLeftRotation(),
+                    display.getTransformation().getScale(),
+                    rightRot
+            ));
+            setItem(5, rightRotButton());
+        }));
         setItem(18, ItemUtil.create(Material.GREEN_CONCRETE, TextUtil.translateLegacy("&2Entity")), ((p, event) -> {
             entityMenu.open(p);
             entityMenu.setItem(18, ItemUtil.create(Material.GREEN_CONCRETE, TextUtil.translateLegacy("&8Display")), ((p1, event1) -> this.open(p1)));
         }));
-        setItem(19, precisionButton(), ((p, event) -> {
+        setItem(19, settingsButton(), ((p, event) -> {
             if (event.isShiftClick()) {
-                handleShiftClick(precisionOptions, event);
-                setItem(19, precisionButton());
+                handleShiftClick(settings, event);
+                setItem(19, settingsButton());
                 return;
             }
-            handlePrecisionButton(event);
+            handleSettingsButton(event);
         }));
         setItem(20, ItemUtil.create(Material.SPONGE, TextUtil.translateLegacy("&2Reset")), ((p, event) -> display.setTransformation(getDefaultTransformation())));
         setItem(26, ItemUtil.create(Material.BARRIER, TextUtil.translateLegacy("&4DELETE")), ((p, event) -> {
@@ -104,22 +136,23 @@ public class DisplayEntityMenu extends Menu {
         }));
     }
 
-    public ItemStack precisionButton() {
-        ItemStack item = ItemUtil.create(Material.BOW, TextUtil.translateLegacy("&2Precision"));
+    public ItemStack settingsButton() {
+        ItemStack item = ItemUtil.create(Material.STRUCTURE_VOID, TextUtil.translateLegacy("&2Settings"));
         ItemMeta meta = item.getItemMeta();
         ArrayList<Component> lore = new ArrayList<>();
 
-        String[] prefixes = new String[]{"&8> ", "&8> ",};
+        String[] prefixes = new String[]{"&8> ", "&8> ", "&8> "};
 
-        for (int i = 0; i < precisionOptions.length; i++) {
-            if (precisionOptions[i]) {
+        for (int i = 0; i < settings.length; i++) {
+            if (settings[i]) {
                 prefixes[i] = "&7>> ";
                 break;
             }
         }
         String precisionVal = precision ? "%.2f" : "%.1f";
         lore.add(TextUtil.translateLegacy(prefixes[0] + "precision: " + precision));
-        lore.add(TextUtil.translateLegacy(prefixes[1] + "modifier: " + String.format(precisionVal, modifier)));
+        lore.add(TextUtil.translateLegacy(prefixes[1] + "global scaling: " + modifyAllAngles));
+        lore.add(TextUtil.translateLegacy(prefixes[2] + "modifier: " + String.format(precisionVal, modifier)));
 
         meta.lore(lore);
         item.setItemMeta(meta);
@@ -157,8 +190,29 @@ public class DisplayEntityMenu extends Menu {
         return item;
     }
     public ItemStack leftRotButton() {
-        return null;
-    } //TODO
+        ItemStack item = ItemUtil.create(Material.BONE_BLOCK, TextUtil.translateLegacy("&6Left Rot"));
+        ItemMeta meta = item.getItemMeta();
+        ArrayList<Component> lore = new ArrayList<>();
+
+        Quaternionf leftRotation = display.getTransformation().getLeftRotation();
+        String[] prefixes = new String[]{"&8> ", "&8> ", "&8> ", "&8> "};
+
+        for (int i = 0; i < leftRotOptions.length; i++) {
+            if (leftRotOptions[i]) {
+                prefixes[i] = "&7>> ";
+                break;
+            }
+        }
+        String precisionVal = precision ? "%.2f" : "%.1f";
+        lore.add(TextUtil.translateLegacy(prefixes[0] + "x: " + String.format(precisionVal, leftRotation.x())));
+        lore.add(TextUtil.translateLegacy(prefixes[1] + "y: " + String.format(precisionVal, leftRotation.y())));
+        lore.add(TextUtil.translateLegacy(prefixes[2] + "z: " + String.format(precisionVal, leftRotation.z())));
+        lore.add(TextUtil.translateLegacy(prefixes[3] + "w: " + String.format(precisionVal, leftRotation.w())));
+
+        meta.lore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
     public ItemStack scaleButton() {
         ItemStack item = ItemUtil.create(Material.BAMBOO_MOSAIC, TextUtil.translateLegacy("&6Scale"));
         ItemMeta meta = item.getItemMeta();
@@ -183,8 +237,29 @@ public class DisplayEntityMenu extends Menu {
         return item;
     }
     public ItemStack rightRotButton() {
-        return null;
-    } //TODO
+        ItemStack item = ItemUtil.create(Material.WHITE_TERRACOTTA, TextUtil.translateLegacy("&6Right Rot"));
+        ItemMeta meta = item.getItemMeta();
+        ArrayList<Component> lore = new ArrayList<>();
+
+        Quaternionf rightRotation = display.getTransformation().getRightRotation();
+        String[] prefixes = new String[]{"&8> ", "&8> ", "&8> ", "&8> "};
+
+        for (int i = 0; i < rightRotOptions.length; i++) {
+            if (rightRotOptions[i]) {
+                prefixes[i] = "&7>> ";
+                break;
+            }
+        }
+        String precisionVal = precision ? "%.2f" : "%.1f";
+        lore.add(TextUtil.translateLegacy(prefixes[0] + "x: " + String.format(precisionVal, rightRotation.x())));
+        lore.add(TextUtil.translateLegacy(prefixes[1] + "y: " + String.format(precisionVal, rightRotation.y())));
+        lore.add(TextUtil.translateLegacy(prefixes[2] + "z: " + String.format(precisionVal, rightRotation.z())));
+        lore.add(TextUtil.translateLegacy(prefixes[3] + "w: " + String.format(precisionVal, rightRotation.w())));
+
+        meta.lore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
     public ItemStack billBoardButton() {
         ItemStack item = ItemUtil.create(Material.OAK_HANGING_SIGN, TextUtil.translateLegacy("&6BillBoard"));
         ItemMeta meta = item.getItemMeta();
@@ -219,19 +294,20 @@ public class DisplayEntityMenu extends Menu {
         }
         return null;
     }
-
     private Vector3f getTranslation(InventoryClickEvent event) {
         Vector3f translation = display.getTransformation().getTranslation();
 
         if (event.isLeftClick() || event.isRightClick()) {
             final boolean isLeftClick = event.isLeftClick();
 
+            final float calcModifier = isLeftClick ? modifier : -modifier;
+
             for (int i = 0; i < translationOptions.length; i++) {
                 if (!translationOptions[i]) continue;
                 switch (i) {
-                    case 0 -> translation = translation.add(isLeftClick ? modifier : -modifier, 0f, 0f);
-                    case 1 -> translation = translation.add(0f, isLeftClick ? modifier : -modifier, 0f);
-                    case 2 -> translation = translation.add(0f, 0f, isLeftClick ? modifier : -modifier);
+                    case 0 -> translation = translation.add(calcModifier, 0.0f, 0.0f);
+                    case 1 -> translation = translation.add(0.0f, calcModifier, 0.0f);
+                    case 2 -> translation = translation.add(0.0f, 0.0f, calcModifier);
                     default -> throw new IllegalArgumentException("Invalid translation option index");
                 }
                 break;
@@ -245,12 +321,15 @@ public class DisplayEntityMenu extends Menu {
         if (event.isLeftClick() || event.isRightClick()) {
             final boolean isLeftClick = event.isLeftClick();
 
+            final float modifyAll = isLeftClick ? (modifyAllAngles ? modifier : 0f) : (modifyAllAngles ? -modifier : 0f);
+            final float calcModifier = isLeftClick ? modifier : -modifier;
+
             for (int i = 0; i < scaleOptions.length; i++) {
                 if (!scaleOptions[i]) continue;
                 switch (i) {
-                    case 0 -> scale = scale.add(isLeftClick ? modifier : -modifier, 0f, 0f);
-                    case 1 -> scale = scale.add(0f, isLeftClick ? modifier : -modifier, 0f);
-                    case 2 -> scale = scale.add(0f, 0f, isLeftClick ? modifier : -modifier);
+                    case 0 -> scale = scale.add(calcModifier, modifyAll, modifyAll);
+                    case 1 -> scale = scale.add(modifyAll, calcModifier, modifyAll);
+                    case 2 -> scale = scale.add(modifyAll, modifyAll, calcModifier);
                     default -> throw new IllegalArgumentException("Invalid translation option index");
                 }
                 break;
@@ -258,8 +337,51 @@ public class DisplayEntityMenu extends Menu {
         }
         return scale;
     }
+    private Quaternionf getLeftRot(InventoryClickEvent event) {
+        Quaternionf leftRot = display.getTransformation().getLeftRotation();
 
-    private void handlePrecisionButton(InventoryClickEvent event) {
+        if (event.isLeftClick() || event.isRightClick()) {
+            final boolean isLeftClick = event.isLeftClick();
+
+            final float calcModifier = isLeftClick ? modifier : -modifier;
+
+            for (int i = 0; i < leftRotOptions.length; i++) {
+                if (!leftRotOptions[i]) continue;
+                switch (i) {
+                    case 0 -> leftRot = leftRot.add(calcModifier, 0.0f, 0.0f, 0.0f);
+                    case 1 -> leftRot = leftRot.add(0.0f, calcModifier, 0.0f, 0.0f);
+                    case 2 -> leftRot = leftRot.add(0.0f, 0.0f, calcModifier, 0.0f);
+                    case 3 -> leftRot = leftRot.add(0.0f, 0.0f, 0.0f, calcModifier);
+                    default -> throw new IllegalArgumentException("Invalid translation option index");
+                }
+                break;
+            }
+        }
+        return leftRot;
+    }
+    private Quaternionf getRightRot(InventoryClickEvent event) {
+        Quaternionf rightRot = display.getTransformation().getRightRotation();
+
+        if (event.isLeftClick() || event.isRightClick()) {
+            final boolean isLeftClick = event.isLeftClick();
+
+            final float calcModifier = isLeftClick ? modifier : -modifier;
+
+            for (int i = 0; i < rightRotOptions.length; i++) {
+                if (!rightRotOptions[i]) continue;
+                switch (i) {
+                    case 0 -> rightRot = rightRot.add(calcModifier, 0.0f, 0.0f, 0.0f);
+                    case 1 -> rightRot = rightRot.add(0.0f, calcModifier, 0.0f, 0.0f);
+                    case 2 -> rightRot = rightRot.add(0.0f, 0.0f, calcModifier, 0.0f);
+                    case 3 -> rightRot = rightRot.add(0.0f, 0.0f, 0.0f, calcModifier);
+                    default -> throw new IllegalArgumentException("Invalid translation option index");
+                }
+                break;
+            }
+        }
+        return rightRot;
+    }
+    private void handleSettingsButton(InventoryClickEvent event) {
         final float modifierIncrement = precision ? 0.01f : 0.1f;
         final float modifierMax = 5.0f;
         final float modifierMin = -0.5f;
@@ -267,19 +389,19 @@ public class DisplayEntityMenu extends Menu {
         if (event.isLeftClick() || event.isRightClick()) {
             final boolean isLeftClick = event.isLeftClick();
 
-            for (int i = 0; i < precisionOptions.length; i++) {
-                if (!precisionOptions[i]) continue;
+            for (int i = 0; i < settings.length; i++) {
+                if (!settings[i]) continue;
                 switch (i) {
                     case 0 -> precision = !precision;
-                    case 1 -> modifier = isLeftClick ? Math.min(modifier + modifierIncrement, modifierMax) : Math.max(modifier - modifierIncrement, modifierMin);
+                    case 1 -> modifyAllAngles = !modifyAllAngles;
+                    case 2 -> modifier = isLeftClick ? Math.min(modifier + modifierIncrement, modifierMax) : Math.max(modifier - modifierIncrement, modifierMin);
                     default -> throw new IllegalArgumentException("Invalid translation option index");
                 }
+                updateAllLore();
                 break;
             }
-            setItem(19, precisionButton());
         }
     }
-
     private void handleShiftClick(boolean[] array, InventoryClickEvent event) {
         if (event.isShiftClick()) {
             int currentIndex = -1;
@@ -302,7 +424,6 @@ public class DisplayEntityMenu extends Menu {
             }
         }
     }
-
     private void adjustBrightness(boolean increase, boolean editingBlockLight, int blocklightInt, int skylightInt) {
         int newBlocklight = blocklightInt;
         int newSkylight = skylightInt;
@@ -316,12 +437,20 @@ public class DisplayEntityMenu extends Menu {
         }
         display.setBrightness(new Display.Brightness(newBlocklight, newSkylight));
     }
-
     private Transformation getDefaultTransformation() {
-        return new Transformation(new Vector3f(-0.5f, 0f, 0f), new Quaternionf(0f,0f,0f,1f), new Vector3f(1f,1f,1f), new Quaternionf(0f,0f,0f,1f));
+        return new Transformation(new Vector3f(0.0f, 0f, 0f), new Quaternionf(0f,0f,0f,1f), new Vector3f(1f,1f,1f), new Quaternionf(0f,0f,0f,1f));
         //{translation:[-0.5f,0f,-0.5f],left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],right_rotation:[0f,0f,0f,1f]}
     }
+    private void updateAllLore() {
+        setItem(0, billBoardButton());
+        setItem(1, brightnessButton());
+        setItem(2, translationButton());
+        setItem(3, scaleButton());
+        setItem(4, leftRotButton());
+        setItem(5, rightRotButton());
 
+        setItem(19, settingsButton());
+    }
     private static String getName(Display display) {
         if(display instanceof BlockDisplay b) return b.getBlock().getMaterial().name().toLowerCase().replace("_", " ");
         if(display instanceof ItemDisplay i) return i.getItemStack() != null ? i.getItemStack().getType().name().toLowerCase().replace("_", " ")
